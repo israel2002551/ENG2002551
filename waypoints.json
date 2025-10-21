@@ -1,0 +1,26 @@
+{
+  "status": "idle",
+  "current_lat": 6.3337,
+  "current_lng": 5.6001,
+  "battery_level": 100,
+  "speed": 0.0,
+  "current_wp": 0,
+  "path_mode": 0,
+  "path_length": 0,
+  "waypoints": [
+    {
+      "id": "wp1",
+      "lat": 6.3337,
+      "lng": 5.6001,
+      "sequence": 0,
+      "status": "pending"
+    },
+    {
+      "id": "wp2",
+      "lat": 40.7130,
+      "lng": -74.0050,
+      "sequence": 1,
+      "status": "pending"
+    }
+  ]
+}
