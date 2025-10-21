@@ -6,7 +6,7 @@
   "speed": 0.0,
   "current_wp": 0,
   "path_mode": 0,
-  "path_length": 0,
+  "path_length": 2,
   "waypoints": [
     {
       "id": "wp1",
@@ -17,8 +17,8 @@
     },
     {
       "id": "wp2",
-      "lat": 40.7130,
-      "lng": -74.0050,
+      "lat": 6.3340,
+      "lng": 5.6005,
       "sequence": 1,
       "status": "pending"
     }
