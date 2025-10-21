@@ -2,34 +2,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 Autonomous Delivery Robot - LIVE CONTROL + PATHFINDING</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+    <title>🤖 Autonomous Delivery Robot - GitHub Integration</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; min-height: 100vh; 
+            color: white; min-height: 100vh;
         }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         .header { text-align: center; margin-bottom: 30px; }
         .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .card { 
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); 
+        .card {
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
             border-radius: 15px; padding: 20px; border: 1px solid rgba(255,255,255,0.2);
         }
         .status-badge { padding: 8px 16px; border-radius: 25px; font-weight: bold; display: inline-block; margin: 5px 0; }
         .idle { background: #ff9800; }
         .active { background: #4caf50; }
         .stopped { background: #f44336; }
-        button { 
-            padding: 12px 24px; border: none; border-radius: 25px; 
-            font-size: 16px; font-weight: bold; cursor: pointer; 
-            margin: 5px; transition: all 0.3s; width: 100%; 
+        button {
+            padding: 12px 24px; border: none; border-radius: 25px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            margin: 5px; transition: all 0.3s; width: 100%;
         }
         .btn-primary { background: #2196f3; color: white; }
         .btn-primary:hover { background: #1976d2; transform: scale(1.05); }
@@ -39,19 +39,14 @@
         .btn-danger:hover { background: #d32f2f; transform: scale(1.05); }
         .btn-edit, .btn-up, .btn-down { background: #ffc107; color: black; width: auto; padding: 6px 12px; font-size: 12px; margin: 0 2px; }
         .btn-delete { background: #f44336; color: white; width: auto; padding: 6px 12px; font-size: 12px; margin: 0 2px; }
-        
-        /* ✅ FIXED: MAP STYLING */
         #mapContainer {
-            height: 450px !important;
-            width: 100% !important;
-            border-radius: 10px !important;
-            background: #f0f0f0 !important;
-            position: relative !important;
+            height: 450px; width: 100%; border-radius: 10px; background: #f0f0f0;
+            position: relative;
         }
         .waypoints { max-height: 300px; overflow-y: auto; }
-        .waypoint { 
-            padding: 12px; margin: 5px 0; background: rgba(0,0,0,0.2); 
-            border-radius: 8px; display: flex; justify-content: space-between; align-items: center; cursor: move; 
+        .waypoint {
+            padding: 12px; margin: 5px 0; background: rgba(0,0,0,0.2);
+            border-radius: 8px; display: flex; justify-content: space-between; align-items: center; cursor: move;
         }
         .pending { border-left: 4px solid #ff9800; }
         .active { border-left: 4px solid #4caf50; }
@@ -63,12 +58,10 @@
         .direct { color: #2196f3; }
         .astar { color: #4caf50; }
         .rrt { color: #ff9800; }
-        .dijkstra { color: #9c27b0; }
-        .route-line { stroke: #ff5722 !important; stroke-width: 4 !important; opacity: 0.9 !important; }
-        
-        @media (max-width: 768px) { 
+        .route-line { stroke: #ff5722; stroke-width: 4; opacity: 0.9; }
+        @media (max-width: 768px) {
             .grid { grid-template-columns: 1fr; }
-            #mapContainer { height: 300px !important; }
+            #mapContainer { height: 300px; }
         }
     </style>
 </head>
@@ -100,12 +93,10 @@
                 <button class="btn-primary" onclick="recalculatePath()">🔄 RECALC ROUTE</button>
                 
                 <h3 style="margin-top: 20px;">⚡ EMERGENCY</h3>
-                <button class="btn-danger" onclick="emergencyStop()" style="background: #d32f2f !important;">
-                    🚨 EMERGENCY STOP
-                </button>
+                <button class="btn-danger" onclick="emergencyStop()">🚨 EMERGENCY STOP</button>
             </div>
 
-            <!-- ✅ FIXED: MAP -->
+            <!-- MAP -->
             <div class="card">
                 <h2>🗺️ Live Map + Route</h2>
                 <div id="mapContainer">
@@ -146,24 +137,16 @@
         </div>
     </div>
 
-    <!-- ✅ FIXED: Firebase + MAP SCRIPT -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-        import { getDatabase, ref, onValue, set } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js';
-        
-        const firebaseConfig = { databaseURL: "https://navigator-59e90-default-rtdb.firebaseio.com" };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        
+    <script>
+        const GITHUB_WAYPOINTS_URL = "https://raw.githubusercontent.com/username/repo/main/waypoints.json";
+        const GITHUB_TELEMETRY_URL = "https://your-endpoint.com/telemetry";
         const ROBOT_ID = "0c58a1ea-476e-4624-bf0f-a23dfd7bde58";
-        const robotRef = ref(db, `robots/${ROBOT_ID}`);
-        const waypointsRef = ref(db, `waypoints/${ROBOT_ID}`);
         
         let map, robotMarker, waypointMarkers = [], routeLine;
         let waypoints = [];
         let telemetryFeed = document.getElementById('telemetryFeed');
         
-        // ✅ FIXED: MAP INIT WITH ERROR HANDLING
+        // Initialize Map
         function initMap(lat = 40.7128, lng = -74.0060) {
             try {
                 map = L.map('mapContainer').setView([lat, lng], 15);
@@ -180,10 +163,7 @@
                     })
                 }).addTo(map).bindPopup('Robot Position');
                 
-                // Remove loading text
                 document.querySelector('#mapContainer > div').style.display = 'none';
-                
-                console.log('🗺️ Map loaded successfully!');
                 addTelemetry('🗺️ Map loaded!');
             } catch (error) {
                 console.error('Map error:', error);
@@ -191,7 +171,7 @@
             }
         }
         
-        // UPDATE ROUTE
+        // Update Route
         function updateRoute() {
             if (routeLine) map.removeLayer(routeLine);
             if (waypoints.length < 2) return;
@@ -206,123 +186,158 @@
             map.fitBounds(routeLine.getBounds().pad(0.1));
         }
         
-        // LIVE ROBOT UPDATES
-        onValue(robotRef, (snapshot) => {
-            const data = snapshot.val() || {};
-            const statusBadge = document.getElementById('statusBadge');
-            statusBadge.className = `status-badge ${data.status || 'idle'}`;
-            statusBadge.textContent = (data.status || 'idle').toUpperCase();
-            
-            document.getElementById('gpsCoords').textContent = 
-                `${(data.current_lat || 0).toFixed(4)}, ${(data.current_lng || 0).toFixed(4)}`;
-            document.getElementById('battery').textContent = data.battery_level + '%';
-            document.getElementById('speed').textContent = (data.speed * 3.6 || 0).toFixed(1) + ' km/h';
-            document.getElementById('currentWP').textContent = data.current_wp || 0;
-            
-            // PATHFINDING
-            const modes = ['DIRECT', 'A*', 'RRT', 'DIJKSTRA'];
-            const mode = modes[data.path_mode || 0];
-            document.getElementById('pathMode').textContent = mode;
-            document.getElementById('pathMode').className = `path-mode ${mode.toLowerCase()}`;
-            document.getElementById('pathLength').textContent = data.path_length || 0;
-            document.getElementById('totalWP').textContent = waypoints.length;
-            
-            // UPDATE MAP POSITION
-            const lat = data.current_lat || 40.7128;
-            const lng = data.current_lng || -74.0060;
-            if (!map) initMap(lat, lng);
-            else {
-                robotMarker.setLatLng([lat, lng]);
-                map.setView([lat, lng], 16);
-            }
-            
-            addTelemetry(`📍 GPS: ${lat.toFixed(4)}, ${lng.toFixed(4)} | 🧠 ${mode}`);
-        });
-        
-        // WAYPOINTS
-        onValue(waypointsRef, (snapshot) => {
-            waypoints = snapshot.val() || [];
-            waypoints.sort((a, b) => a.sequence - b.sequence);
-            
-            const list = document.getElementById('waypointsList');
-            list.innerHTML = '';
-            waypointMarkers.forEach(m => map?.removeLayer(m));
-            waypointMarkers = [];
-            
-            waypoints.forEach((wp, i) => {
-                const div = document.createElement('div');
-                div.className = `waypoint ${wp.status}`;
-                div.draggable = true;
-                div.innerHTML = `
-                    <div style="flex: 1;">
-                        <span class="sequence">#${wp.sequence}</span>
-                        ${wp.lat.toFixed(4)}, ${wp.lng.toFixed(4)}
-                    </div>
-                    <div>
-                        <button class="btn-up" onclick="moveWP(${i},-1)">↑</button>
-                        <button class="btn-down" onclick="moveWP(${i},1)">↓</button>
-                        <button class="btn-edit" onclick="editWP(${i})">✏️</button>
-                        <button class="btn-delete" onclick="deleteWP(${i})">🗑️</button>
-                    </div>
-                `;
-                list.appendChild(div);
+        // Fetch Data from GitHub
+        async function fetchData() {
+            try {
+                const response = await fetch(GITHUB_WAYPOINTS_URL + `?t=${Date.now()}`);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const data = await response.json();
                 
-                if (map) {
-                    const color = wp.status === 'pending' ? 'orange' : 
-                                 wp.status === 'active' ? 'green' : 'purple';
-                    const marker = L.circleMarker([wp.lat, wp.lng], {
-                        radius: 8, fillColor: color, color: 'white', weight: 2, fillOpacity: 0.8
-                    }).addTo(map).bindPopup(`#${wp.sequence} ${wp.status}`);
-                    waypointMarkers.push(marker);
+                // Update Status
+                const statusBadge = document.getElementById('statusBadge');
+                statusBadge.className = `status-badge ${data.status || 'idle'}`;
+                statusBadge.textContent = (data.status || 'idle').toUpperCase();
+                
+                // Update Telemetry
+                document.getElementById('gpsCoords').textContent =
+                    `${(data.current_lat || 0).toFixed(4)}, ${(data.current_lng || 0).toFixed(4)}`;
+                document.getElementById('battery').textContent = (data.battery_level || 100) + '%';
+                document.getElementById('speed').textContent = ((data.speed || 0) * 3.6).toFixed(1) + ' km/h';
+                document.getElementById('currentWP').textContent = data.current_wp || 0;
+                
+                // Pathfinding
+                const modes = ['DIRECT', 'A*', 'RRT'];
+                const mode = modes[data.path_mode || 0];
+                document.getElementById('pathMode').textContent = mode;
+                document.getElementById('pathMode').className = `path-mode ${mode.toLowerCase()}`;
+                document.getElementById('pathLength').textContent = data.path_length || 0;
+                document.getElementById('totalWP').textContent = data.waypoints ? data.waypoints.length : 0;
+                
+                // Update Map Position
+                const lat = data.current_lat || 40.7128;
+                const lng = data.current_lng || -74.0060;
+                if (!map) initMap(lat, lng);
+                else {
+                    robotMarker.setLatLng([lat, lng]);
+                    map.setView([lat, lng], 16);
                 }
-            });
-            
-            updateRoute();
-        });
+                
+                // Update Waypoints
+                waypoints = data.waypoints || [];
+                waypoints.sort((a, b) => a.sequence - b.sequence);
+                const list = document.getElementById('waypointsList');
+                list.innerHTML = '';
+                waypointMarkers.forEach(m => map?.removeLayer(m));
+                waypointMarkers = [];
+                
+                waypoints.forEach((wp, i) => {
+                    const div = document.createElement('div');
+                    div.className = `waypoint ${wp.status}`;
+                    div.draggable = true;
+                    div.innerHTML = `
+                        <div style="flex: 1;">
+                            <span class="sequence">#${wp.sequence}</span>
+                            ${wp.lat.toFixed(4)}, ${wp.lng.toFixed(4)}
+                        </div>
+                        <div>
+                            <button class="btn-up" onclick="moveWP(${i},-1)">↑</button>
+                            <button class="btn-down" onclick="moveWP(${i},1)">↓</button>
+                            <button class="btn-edit" onclick="editWP(${i})">✏️</button>
+                            <button class="btn-delete" onclick="deleteWP(${i})">🗑️</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                    
+                    if (map) {
+                        const color = wp.status === 'pending' ? 'orange' :
+                                     wp.status === 'active' ? 'green' : 'purple';
+                        const marker = L.circleMarker([wp.lat, wp.lng], {
+                            radius: 8, fillColor: color, color: 'white', weight: 2, fillOpacity: 0.8
+                        }).addTo(map).bindPopup(`#${wp.sequence} ${wp.status}`);
+                        waypointMarkers.push(marker);
+                    }
+                });
+                
+                updateRoute();
+                addTelemetry(`📍 GPS: ${lat.toFixed(4)}, ${lng.toFixed(4)} | 🧠 ${mode}`);
+            } catch (error) {
+                console.error('Fetch error:', error);
+                addTelemetry('❌ Failed to fetch data from GitHub');
+            }
+        }
         
-        // CONTROLS
-        window.setStatus = status => {
-            set(ref(db, `robots/${ROBOT_ID}/status`), status);
-            addTelemetry(`🎮 ${status.toUpperCase()} sent!`);
+        // Controls
+        window.setStatus = async status => {
+            try {
+                const response = await fetch(GITHUB_TELEMETRY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status, robot_id: ROBOT_ID })
+                });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                addTelemetry(`🎮 ${status.toUpperCase()} sent!`);
+            } catch (error) {
+                addTelemetry('❌ Failed to update status');
+            }
         };
-        window.emergencyStop = () => {
-            set(ref(db, `robots/${ROBOT_ID}/status`), 'stopped');
-            addTelemetry(`🚨 EMERGENCY STOP!`);
-        };
-        window.recalculatePath = () => addTelemetry('🔄 Route recalc sent!');
         
-        // WAYPOINT FUNCTIONS
-        window.moveWP = (i, dir) => {
+        window.emergencyStop = async () => {
+            await setStatus('stopped');
+            addTelemetry('🚨 EMERGENCY STOP!');
+        };
+        
+        window.recalculatePath = () => {
+            addTelemetry('🔄 Route recalc sent!');
+            // Note: ESP32 handles recalculation internally
+        };
+        
+        // Waypoint Functions
+        window.moveWP = async (i, dir) => {
             const newI = i + dir;
             if (newI < 0 || newI >= waypoints.length) return;
-            [waypoints[i].sequence, waypoints[newI].sequence] = 
+            [waypoints[i].sequence, waypoints[newI].sequence] =
                 [waypoints[newI].sequence, waypoints[i].sequence];
-            set(waypointsRef, waypoints);
+            await updateWaypoints();
             addTelemetry(`🔀 WP ${i+1} ↔ ${newI+1}`);
         };
         
-        window.editWP = i => {
+        window.editWP = async i => {
             const wp = waypoints[i];
             const lat = prompt('Latitude:', wp.lat);
             const lng = prompt('Longitude:', wp.lng);
             if (lat && lng) {
-                waypoints[i].lat = +lat; waypoints[i].lng = +lng;
-                set(waypointsRef, waypoints);
+                waypoints[i].lat = +lat;
+                waypoints[i].lng = +lng;
+                await updateWaypoints();
                 addTelemetry(`✏️ WP #${wp.sequence} updated`);
             }
         };
         
-        window.deleteWP = i => {
+        window.deleteWP = async i => {
             if (confirm('Delete WP?')) {
                 waypoints.splice(i, 1);
                 waypoints.forEach((wp, j) => wp.sequence = j + 1);
-                set(waypointsRef, waypoints);
+                await updateWaypoints();
                 addTelemetry(`🗑️ WP #${i+1} deleted`);
             }
         };
         
-        // ADD WAYPOINT
-        document.getElementById('addWaypointForm').onsubmit = e => {
+        async function updateWaypoints() {
+            try {
+                const response = await fetch(GITHUB_TELEMETRY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ waypoints, robot_id: ROBOT_ID })
+                });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                fetchData(); // Refresh after update
+            } catch (error) {
+                addTelemetry('❌ Failed to update waypoints');
+            }
+        }
+        
+        // Add Waypoint
+        document.getElementById('addWaypointForm').onsubmit = async e => {
             e.preventDefault();
             const id = document.getElementById('wpId').value;
             const lat = +document.getElementById('wpLat').value;
@@ -331,24 +346,26 @@
             
             waypoints.splice(after, 0, { id, lat, lng, sequence: after + 1, status: 'pending' });
             waypoints.forEach((wp, i) => wp.sequence = i + 1);
-            set(waypointsRef, waypoints);
+            await updateWaypoints();
             addTelemetry(`➕ WP ${id} added at #${after+1}`);
             e.target.reset();
         };
         
-        // TELEMETRY
+        // Telemetry
         function addTelemetry(msg) {
             const div = document.createElement('div');
             div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
             telemetryFeed.appendChild(div);
             telemetryFeed.scrollTop = telemetryFeed.scrollHeight;
-            if (telemetryFeed.children.length > 50) 
+            if (telemetryFeed.children.length > 50)
                 telemetryFeed.removeChild(telemetryFeed.firstChild);
         }
         
-        // STARTUP
+        // Startup
         addTelemetry('✅ Dashboard loaded!');
-        setTimeout(() => initMap(), 1000); // Delay for DOM ready
+        setTimeout(() => initMap(), 1000);
+        fetchData();
+        setInterval(fetchData, 5000); // Poll every 5 seconds
     </script>
 </body>
 </html>
