@@ -138,7 +138,7 @@
     </div>
 
     <script>
-        const GITHUB_WAYPOINTS_URL = "https://raw.githubusercontent.com/username/repo/main/waypoints.json";
+        const GITHUB_WAYPOINTS_URL = "https://raw.githubusercontent.com/israel2002551/ENG2002551/repo/main/waypoints.json";
         const GITHUB_TELEMETRY_URL = "https://your-endpoint.com/telemetry";
         const ROBOT_ID = "0c58a1ea-476e-4624-bf0f-a23dfd7bde58";
         
